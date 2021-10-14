@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Messenger\Message\SyncMessage;
+use App\Messenger\Message\DoctrineMessage;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -10,24 +10,23 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MessengerSendSyncCommand extends Command
-{
 
-    protected static $defaultName = 'app:messenger:send-sync';
-    protected static $defaultDescription = 'Sends sync messages';
+class MessengerSendDoctrineCommand extends Command
+{
+    protected static $defaultName = 'app:messenger:send-doctrine';
+    protected static $defaultDescription = 'Sends doctrine messages';
     private MessageBusInterface $bus;
-    
+
     public function __construct(MessageBusInterface $bus)
     {
         $this->bus = $bus;
-        parent::__construct();   
+        parent::__construct();
     }
-
 
     protected function configure(): void
     {
         $this
-            ->setName('app:messenger:send-sync')
+            ->setName(self::$defaultName)
             ->setDescription(self::$defaultDescription)
             ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
             ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
@@ -36,11 +35,14 @@ class MessengerSendSyncCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        for ($i=0; $i <=10;) { 
-            $this->bus->dispatch(new SyncMessage(\sprintf('Data for sync message %s', $i)));
+        $start = \microtime(true);
+        for ($i=0; $i <= 1;) { 
+            $this->bus->dispatch(new DoctrineMessage(\sprintf('Data for doctrine message %s', $i)));
             ++$i;
-        }
-      
+        }   
+        $end = \microtime(true);
+        $output->writeln(\sprintf('Total time: %s seg', ($end-$start)));
+
         return Command::SUCCESS;
     }
 }

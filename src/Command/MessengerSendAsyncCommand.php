@@ -20,6 +20,7 @@ class MessengerSendAsyncCommand extends Command
     public function __construct(MessageBusInterface $bus)
     {
         $this->bus = $bus;
+        parent::__construct();   
     }
 
     protected function configure(): void
